@@ -1,12 +1,25 @@
+<!DOCTYPE html>
 <html>
 <head>
     <title>Sleep Calculator Result</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+	<link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
-    <h1>Your Sleep Calculation</h1>
-    <p>Current time: {{ result.current_time }}</p>
-    <p>Time to fall asleep: {{ result.time_to_fall_asleep }} minutes</p>
-    <p>Suggested alarm time: {{ result.alarm_time }}</p>
-    <a href="/">Go Back</a>
+    <h1 class="results">Your Sleep Calculation</h1> <!-- specific class for the second-page title -->
+    
+    <div class="result-box"> <!--  transparent box around the result -->
+        <p class="result-label">Current Time</p>
+        <p class="result-value">{{ result.current_time }}</p>
+
+        <p class="result-label">Time to Fall Asleep</p>
+        <p class="result-value">{{ result.time_to_fall_asleep }} minutes</p>
+
+        <p class="result-label">Suggested Alarm Time</p>
+        <p class="result-value">{{ result.alarm_time }}</p>
+    </div>
+
+    <a href="/" class="go-back-button">Go Back</a>
 </body>
 </html>
