@@ -1,5 +1,4 @@
-//index.html
-
+// index.html 
 document.addEventListener('DOMContentLoaded', function() {
     var form = document.getElementById('sleepForm');
     var input = document.getElementById('time_to_fall_asleep');
@@ -7,14 +6,13 @@ document.addEventListener('DOMContentLoaded', function() {
     var toggle = document.getElementById('time-format-toggle');
     var currentTimeDisplay = document.getElementById('current-time');
     
-
-    //restore toggle state 
+    // restore toggle state from localStorage
     if (toggle) {
         const savedToggleState = localStorage.getItem('timeFormatToggle') === 'true';
         toggle.checked = savedToggleState;
     }
 
-    //initialize current time
+    // initialize current time (local) WORK 
     function updateCurrentTime() {
         if (currentTimeDisplay) {
             var now = new Date();
@@ -22,31 +20,29 @@ document.addEventListener('DOMContentLoaded', function() {
             var minutes = now.getMinutes().toString().padStart(2, '0');
             var suffix = '';
 
-            if (!toggle.checked) { // If not 24-hour format (i.e., 12-hour format)
-                var suffix = hours >= 12 ? ' PM' : ' AM';
+            if (!toggle.checked) { // 12-hour format
+                suffix = hours >= 12 ? ' PM' : ' AM';
                 hours = hours % 12 || 12;
                 currentTimeDisplay.textContent = 'Current time: ' + hours + ':' + minutes + suffix;
             } else { // 24-hour format
-                hours = hours.toString().padStart(2, '0'); //pad hours with leading zero if needed
+                hours = hours.toString().padStart(2, '0');
                 currentTimeDisplay.textContent = 'Current time: ' + hours + ':' + minutes;
             }
         }
-            //currentTimeDisplay.textContent = 'Current time: ' + hours + ':' + minutes + suffix;
     }
-    
 
-    //event listener for toggle change
+    // event listener for toggle change
     if (toggle) {
         toggle.addEventListener('change', function() {
-            updateCurrentTime(); //updates current time display in front page
-            localStorage.setItem('timeFormatToggle', toggle.checked); //save toggle state
+            updateCurrentTime();
+            localStorage.setItem('timeFormatToggle', toggle.checked);
         });
     }
 
-    // update time every minute
+    // update current time every minute
     if (currentTimeDisplay) {
         setInterval(updateCurrentTime, 60000);
-        updateCurrentTime(); //initial call to display current time
+        updateCurrentTime(); // Initial call
     }
 
     // form validation
@@ -54,20 +50,18 @@ document.addEventListener('DOMContentLoaded', function() {
         form.addEventListener('submit', function(event) {
             var timeInput = parseInt(input.value, 10);
             if (isNaN(timeInput) || timeInput < 1 || timeInput > 120) {
-                event.preventDefault(); //prevent form submission
-                errorMessage.style.display = 'block'; //show cute lil error message
-                input.classList.add('input-error'); // add red border
+                event.preventDefault();
+                errorMessage.style.display = 'block';
+                input.classList.add('input-error');
             } else {
-                errorMessage.style.display = 'none'; // hide error message
-                input.classList.remove('input-error'); // remove red border
+                errorMessage.style.display = 'none';
+                input.classList.remove('input-error');
             }
         });
     }
 });
 
-
-//results page
-
+// result.html 
 document.addEventListener('DOMContentLoaded', function() {
     var toggle = document.getElementById('time-format-toggle');
     var currentTimeElement = document.getElementById('currentTime');
@@ -79,7 +73,7 @@ document.addEventListener('DOMContentLoaded', function() {
         toggle.checked = is24HourFormat;
     }
 
-    //24 to 12
+    // 12-hour to 24-hour conversion
     function convertTo12Hour(timeString) {
         var parts = timeString.split(":");
         var hour = parseInt(parts[0]);
@@ -98,7 +92,7 @@ document.addEventListener('DOMContentLoaded', function() {
         return hour + ":" + minute + " " + period;
     }
 
-    //convert 12 to 24
+    // 24-hour to 12-hour conversion
     function convertTo24Hour(timeString) {
         var parts = timeString.split(":");
         var hour = parseInt(parts[0]);
@@ -113,10 +107,10 @@ document.addEventListener('DOMContentLoaded', function() {
         return hour.toString().padStart(2, '0') + ":" + minute;
     }
 
-    // update the result time format with toggle :3 no need 4 button
+    // update result time with toggle
     function updateResultTime() {
         if (currentTimeElement && alarmTimeElement) {
-            var originalCurrentTime= currentTimeElement.getAttribute('data-original-time');
+            var originalCurrentTime = currentTimeElement.getAttribute('data-original-time');
             var originalAlarmTime = alarmTimeElement.getAttribute('data-original-time');
 
             if (toggle.checked) {
@@ -132,19 +126,18 @@ document.addEventListener('DOMContentLoaded', function() {
     // event listener for toggle change
     if (toggle) {
         toggle.addEventListener('change', function() {
-            updateResultTime(); //update result time display
-            localStorage.setItem('timeFormatToggle', toggle.checked); //saves toggle
+            updateResultTime();
+            localStorage.setItem('timeFormatToggle', toggle.checked);
         });
     }
 
-    // initialize result time
+    // initialize result time please
     if (currentTimeElement && alarmTimeElement) {
-        updateResultTime(); // initial call to update result time
+        updateResultTime();
     }
-}); 
+});
 
-//stars! i love this part
-
+// Stars! (Starry background effect) 
 document.addEventListener('DOMContentLoaded', function() {
     const starContainer = document.createElement('div');
     starContainer.classList.add('stars-background');
@@ -156,11 +149,12 @@ document.addEventListener('DOMContentLoaded', function() {
         const star = document.createElement('div');
         star.classList.add('star');
 
-        star.style.top = Math.random() * 100 + 'vh'; //random position on le screen
-        star.style.left = Math.random() * 100 + 'vw';
+        star.style.top = Math.random() * 100 + 'vh'; // random vertical position
+        star.style.left = Math.random() * 100 + 'vw'; // random horizontal position
+        star.style.animationDuration = 1.2 + Math.random() * 1.5 + 's'; // random flicker effect
 
-        star.style.animationDuration = 1.2 + Math.random() * 1.5 + 's'; //random flicker
-
-        starContainer.appendChild(star); //append star 2 container
+        starContainer.appendChild(star); // append star to container
     }
 });
+
+// IF I EVER SEE ANOTHER LINE OF JS IT WILL BE TOO SOON
