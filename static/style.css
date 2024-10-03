@@ -93,7 +93,7 @@ button:hover {
     border-color: #FFF;
 }
 
-/* gonna do the second page now */
+/* gonna do the second page now, results */ 
 
 .result-box {
     border: 2px solid rgba(255, 255, 255, 0.6);
@@ -144,6 +144,7 @@ button:hover {
     text-align: center;
     border: 2px solid rgba(173, 216, 230, 0.3);
     border-radius: 10px;
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
     text-decoration: none;
     font-weight: bold;
     font-size: 1.2rem;
@@ -155,34 +156,37 @@ button:hover {
     border-color: #FFF;
 }
 
-/* Styling for Current Time Container */
-.current-time-container {
+.current-time-container { 
     position: absolute;
     top: 10px;
     right: 20px;
     text-align: right;
-    color: #FEFEFE;
+    color: #fefefe7c;
     font-family: 'Gabarito', sans-serif;
-    font-size: 1.5rem;
-    font-weight: 400;
+    font-size: 1.0rem;
+    font-weight: 100;
     letter-spacing: 0.05em;
     text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.6);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
 }
 
 .toggle-container {
-    margin-top: 10px; /* Add space below the current time */
     display: flex;
-    justify-content: flex-end;
     align-items: center;
+    justify-content: space-between; 
+    gap: 10px;
+    margin: 10;
 }
 
-/* Styling for Toggle Switch */
 .switch24 {
     position: relative;
     display: inline-block;
-    width: 40px; /* Make the toggle smaller */
+    width: 40px;
     height: 20px;
-    margin-right: 10px; /* Add space between the toggle and the label */
+    margin-right: 0px;
+    margin-top: 20px;
 }
 
 .switch24 input {
@@ -198,9 +202,9 @@ button:hover {
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(173, 216, 230, 0.3); /* Match the current page color */
+    background-color: rgba(173, 216, 230, 0.3);
     transition: 0.4s;
-    border-radius: 34px;
+    border-radius: 36px;
 }
 
 .slider:before {
@@ -216,18 +220,62 @@ button:hover {
 }
 
 input:checked + .slider {
-    background-color: #170E47; /* Darker color to match the theme when active */
+    background-color: #170E47;
 }
 
 input:checked + .slider:before {
     transform: translateX(20px);
 }
 
-/* Styling for the toggle label */
 .toggle-label {
-    color: #FEFEFE;
+    color: #fefefe60;
     font-family: 'Gabarito', sans-serif;
-    font-size: 1rem;
-    font-weight: 400;
+    font-size: 0.8rem;
+    font-weight: 100;
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4);
+    line-height: 1;
+    display: flex;
+    align-items: center;
+}
+
+/*skystyling*/
+
+@keyframes flicker {
+    0%, 100% {
+        opacity: 0.1;
+    }
+    20% {
+        opacity: 0.3; 
+    }
+    40% {
+        opacity: 0.5;
+    }
+    60% {
+        opacity: 0.9;
+    }
+    80% {
+        opacity: 0.6;
+    }
+}
+
+/* background for flickering stars */
+.stars-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: -1;
+    pointer-events: none; /*background doesn't interfere with interactions */
+}
+
+.star {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: white;
+    opacity: 0;
+    border-radius: 50%;
+    animation: flicker 0.1s infinite ease-in-out alternate;
 }

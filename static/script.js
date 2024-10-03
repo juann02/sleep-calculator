@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var errorMessage = document.getElementById('error-message');
     var toggle = document.getElementById('time-format-toggle');
     var currentTimeDisplay = document.getElementById('current-time');
+    
 
     //restore toggle state 
     if (toggle) {
@@ -21,27 +22,31 @@ document.addEventListener('DOMContentLoaded', function() {
             var minutes = now.getMinutes().toString().padStart(2, '0');
             var suffix = '';
 
-            if (!toggle.checked) { // 12-hour format
-                suffix = hours >= 12 ? ' PM' : ' AM';
+            if (!toggle.checked) { // If not 24-hour format (i.e., 12-hour format)
+                var suffix = hours >= 12 ? ' PM' : ' AM';
                 hours = hours % 12 || 12;
+                currentTimeDisplay.textContent = 'Current time: ' + hours + ':' + minutes + suffix;
+            } else { // 24-hour format
+                hours = hours.toString().padStart(2, '0'); //pad hours with leading zero if needed
+                currentTimeDisplay.textContent = 'Current time: ' + hours + ':' + minutes;
             }
-
-            currentTimeDisplay.textContent = 'Current time: ' + hours + ':' + minutes + suffix;
         }
+            //currentTimeDisplay.textContent = 'Current time: ' + hours + ':' + minutes + suffix;
     }
+    
 
     //event listener for toggle change
     if (toggle) {
         toggle.addEventListener('change', function() {
-            updateCurrentTime(); // Update current time display
-            localStorage.setItem('timeFormatToggle', toggle.checked); // Save toggle state
+            updateCurrentTime(); //updates current time display in front page
+            localStorage.setItem('timeFormatToggle', toggle.checked); //save toggle state
         });
     }
 
     // update time every minute
     if (currentTimeDisplay) {
-        setInterval(updateCurrentTime, 60000); // Update every minute
-        updateCurrentTime(); // Initial call to display current time
+        setInterval(updateCurrentTime, 60000);
+        updateCurrentTime(); //initial call to display current time
     }
 
     // form validation
@@ -69,7 +74,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var alarmTimeElement = document.getElementById('alarmTime');
     var is24HourFormat = localStorage.getItem('timeFormatToggle') === 'true';
 
-    // restore toggle state on load and update the display
+    // restore toggle state on loading and update the display
     if (toggle) {
         toggle.checked = is24HourFormat;
     }
@@ -108,7 +113,7 @@ document.addEventListener('DOMContentLoaded', function() {
         return hour.toString().padStart(2, '0') + ":" + minute;
     }
 
-    // update the result time format
+    // update the result time format with toggle :3 no need 4 button
     function updateResultTime() {
         if (currentTimeElement && alarmTimeElement) {
             var originalCurrentTime= currentTimeElement.getAttribute('data-original-time');
@@ -127,13 +132,35 @@ document.addEventListener('DOMContentLoaded', function() {
     // event listener for toggle change
     if (toggle) {
         toggle.addEventListener('change', function() {
-            updateResultTime(); // Update result time display
-            localStorage.setItem('timeFormatToggle', toggle.checked); // Save toggle state
+            updateResultTime(); //update result time display
+            localStorage.setItem('timeFormatToggle', toggle.checked); //saves toggle
         });
     }
 
-    // initialize result time on `result.html`
+    // initialize result time
     if (currentTimeElement && alarmTimeElement) {
         updateResultTime(); // initial call to update result time
     }
 }); 
+
+//stars! i love this part
+
+document.addEventListener('DOMContentLoaded', function() {
+    const starContainer = document.createElement('div');
+    starContainer.classList.add('stars-background');
+    document.body.appendChild(starContainer);
+
+    const starCount = 222;
+
+    for (let i = 0; i < starCount; i++) {
+        const star = document.createElement('div');
+        star.classList.add('star');
+
+        star.style.top = Math.random() * 100 + 'vh'; //random position on le screen
+        star.style.left = Math.random() * 100 + 'vw';
+
+        star.style.animationDuration = 1.2 + Math.random() * 1.5 + 's'; //random flicker
+
+        starContainer.appendChild(star); //append star 2 container
+    }
+});
