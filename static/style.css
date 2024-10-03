@@ -124,7 +124,7 @@ button:hover {
     margin-bottom: 10px;
 }
 
-/* Styling for the values in the result box */
+/* styling for the values in the result box */
 .result-value {
     font-family: 'Gabarito', sans-serif;
     font-size: 1.25rem;
@@ -133,7 +133,7 @@ button:hover {
     margin-bottom: 20px;
 }
 
-/* Styling for the Go Back button */
+/* styling for the Go Back button */
 .go-back-button {
     display: inline-block;
     margin-top: 20px;

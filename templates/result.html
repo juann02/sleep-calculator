@@ -3,74 +3,36 @@
 <head>
     <title>Sleep Calculator Result</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-	<link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
+    <!-- Current time and toggle switch -->
+    <div class="current-time-container">
+        <div class="toggle-container">
+            <label class="switch24">
+                <input type="checkbox" id="time-format-toggle">
+                <span class="slider round"></span>
+            </label>
+            <span class="toggle-label">24 Hour</span>
+        </div>
+    </div>
+
     <h1 class="results">Your Sleep Calculation</h1>
-    
+
     <div class="result-box">
         <p class="result-label">Current Time</p>
-        <p class="result-value" id="currentTime">{{ result.current_time }}</p>
+        <p class="result-value" id="currentTime" data-original-time="{{ result.current_time }}">{{ result.current_time }}</p>
 
         <p class="result-label">Time to Fall Asleep</p>
         <p class="result-value">{{ result.time_to_fall_asleep }} minutes</p>
 
         <p class="result-label">Suggested Alarm Time</p>
-        <p class="result-value" id="alarmTime">{{ result.alarm_time }}</p>
+        <p class="result-value" id="alarmTime" data-original-time="{{ result.alarm_time }}">{{ result.alarm_time }}</p>
     </div>
-
-    <button id="toggleButton" onclick="toggleTimeFormat()">Toggle Time Format</button>
 
     <a href="/" class="go-back-button">Go Back</a>
 
-    <script>
-        var is24HourFormat = true; // starts with 24-hour format
-        var originalCurrentTime = "{{ result.current_time }}"; // original current time
-        var originalAlarmTime = "{{ result.alarm_time }}"; // original alarm time
-
-        //  toggles the time format when the button is clicked; so many fking variables
-        function toggleTimeFormat() {
-            var currentTimeElement = document.getElementById("currentTime");
-            var alarmTimeElement = document.getElementById("alarmTime");
-
-            var currentTime = currentTimeElement.innerHTML; // gets current time text
-            var alarmTime = alarmTimeElement.innerHTML; // gets alarm time text
-
-            // toggle between 24-hour and am/pm formats
-            if (is24HourFormat) {
-                currentTimeElement.innerHTML = convertTo12Hour(currentTime); // converts current time
-                alarmTimeElement.innerHTML = convertTo12Hour(alarmTime); // converts alarm time
-                is24HourFormat = false;
-            } else {
-                currentTimeElement.innerHTML = originalCurrentTime; // goes back to original
-                alarmTimeElement.innerHTML = originalAlarmTime; // goes back to original
-                is24HourFormat = true;
-            }
-        }
-
-        // function to convert 24-hour time to 12-hour format
-        function convertTo12Hour(timeString) {
-            var parts = timeString.split(":"); 
-            var hour = parseInt(parts[0]); // get the hour
-            var minute = parts[1]; // get the minute part (keep it as string)
-
-            var period = "AM"; // assume it's AM
-            if (hour >= 12) {
-                period = "PM"; // if hour is 12 or more, set to PM
-                if (hour > 12) {
-                    hour -= 12; // convert to 12-hour 
-                }
-            } else if (hour === 0) {
-                hour = 12; 
-            }
-
-            var formattedTime = hour + ":" + minute.padStart(2, '0') + " " + period;
-            return formattedTime; // returns formatted time
-        
-        // im so confused lol //im in tears 
-        }
-
-    </script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>
