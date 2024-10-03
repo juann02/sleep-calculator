@@ -1,34 +1,42 @@
-from flask import Flask, render_template, request
-from main import calculate_alarm_time
+from flask import Flask, render_template, request, jsonify
+from datetime import datetime, timedelta
 
 app = Flask(__name__)
 
-# Main route
+# store timezone offsets temporarily
+timezone_offset = 0
+
+@app.route('/set-timezone', methods=['POST'])
+def set_timezone():
+    global timezone_offset
+    data = request.get_json()
+    timezone_offset = int(data['offset'])
+    return jsonify(success=True)
+
 @app.route('/')
 def index():
     return render_template('index.html')
 
-# Route to handle sleep calculator
 @app.route('/calculate', methods=['POST'])
 def calculate():
-    # Get the form data, with a default of '15' if empty
-    time_to_fall_asleep = request.form.get('time_to_fall_asleep', '15')  # Ensure default is a string
-    
-    # Debugging: Print the input to the console
-    print(f"Received time_to_fall_asleep: {time_to_fall_asleep}")
-    
-    try:
-        # Attempt to convert input to an integer
-        time_to_fall_asleep = int(time_to_fall_asleep)
-    except ValueError:
-        # If conversion fails, return error
-        print("Error: Invalid input")
-        return "Invalid input. Please enter a valid number."
+    global timezone_offset
+    time_to_fall_asleep = int(request.form['time_to_fall_asleep'])
 
-    # If the input is valid, calculate the alarm time
-    result = calculate_alarm_time(time_to_fall_asleep)
-    
-    return render_template('result.html', result=result)
+    #get current UTC time and adjust with the stored timezone offset
+    current_time = datetime.utcnow() - timedelta(minutes=timezone_offset)
+
+    #calculate suggested alarm time
+    alarm_time = current_time + timedelta(minutes=450 + time_to_fall_asleep)  # 7.5 hours in minutes + time_to_fall_asleep
+
+    #format the times for the result page
+    formatted_current_time = current_time.strftime('%H:%M')
+    formatted_alarm_time = alarm_time.strftime('%H:%M')
+
+    return render_template('result.html', result={
+        'current_time': formatted_current_time,
+        'time_to_fall_asleep': time_to_fall_asleep,
+        'alarm_time': formatted_alarm_time
+    })
 
 if __name__ == '__main__':
     app.run(debug=True)

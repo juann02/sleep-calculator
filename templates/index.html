@@ -11,15 +11,14 @@
         <h1>RestRight</h1>
     </div>
 
-    <!-- current time and toggle switch -->
     <div class="current-time-container">
         <span id="current-time">Current time: </span>
         <div class="toggle-container">
-            <span class="toggle-label">24 Hour</span>
             <label class="switch24">
                 <input type="checkbox" id="time-format-toggle">
                 <span class="slider round"></span>
             </label>
+            <span class="toggle-label">24 Hour</span>
         </div>
     </div>
 
@@ -29,6 +28,20 @@
         <span id="error-message" style="color: red; display: none;">Enter a valid time (1-120 minutes).</span>
         <button type="submit">Calculate</button>
     </form>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            //sends timezone offset to the server -- thx juan
+            var timezoneOffset = new Date().getTimezoneOffset();
+            fetch('/set-timezone', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ offset: timezoneOffset })
+            });
+        });
+    </script>
 
     <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>

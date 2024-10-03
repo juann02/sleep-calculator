@@ -1,79 +1,104 @@
-// index.html 
+//index.html
+
 document.addEventListener('DOMContentLoaded', function() {
     var form = document.getElementById('sleepForm');
     var input = document.getElementById('time_to_fall_asleep');
     var errorMessage = document.getElementById('error-message');
     var toggle = document.getElementById('time-format-toggle');
     var currentTimeDisplay = document.getElementById('current-time');
-    
-    // restore toggle state from localStorage
+    var currentTimeElement = document.getElementById('currentTime');
+    var alarmTimeElement = document.getElementById('alarmTime');
+    var is24HourFormat = localStorage.getItem('timeFormatToggle') === 'true';
+
+    // restore toggle state
     if (toggle) {
-        const savedToggleState = localStorage.getItem('timeFormatToggle') === 'true';
-        toggle.checked = savedToggleState;
+        toggle.checked = is24HourFormat;
     }
 
-    // initialize current time (local) WORK 
     function updateCurrentTime() {
-        if (currentTimeDisplay) {
-            var now = new Date();
-            var hours = now.getHours();
-            var minutes = now.getMinutes().toString().padStart(2, '0');
-            var suffix = '';
+        var now = new Date();
+        var hours = now.getHours();
+        var minutes = now.getMinutes().toString().padStart(2, '0');
+        var formattedTime = '';
 
-            if (!toggle.checked) { // 12-hour format
-                suffix = hours >= 12 ? ' PM' : ' AM';
-                hours = hours % 12 || 12;
-                currentTimeDisplay.textContent = 'Current time: ' + hours + ':' + minutes + suffix;
-            } else { // 24-hour format
-                hours = hours.toString().padStart(2, '0');
-                currentTimeDisplay.textContent = 'Current time: ' + hours + ':' + minutes;
-            }
+        if (!toggle.checked) { 
+            var period = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12 || 12; // convert to 12-hour format, ensure hour 0 becomes 12
+            formattedTime = hours + ':' + minutes + ' ' + period;
+        } else { // if 24-hour format
+            hours = hours.toString().padStart(2, '0'); //pad hours with leading zero if needed
+            formattedTime = hours + ':' + minutes;
+        }
+
+        if (currentTimeDisplay) {
+            currentTimeDisplay.textContent = 'Current time: ' + formattedTime;
+        }
+
+        if (currentTimeElement) {
+            currentTimeElement.textContent = formattedTime;
         }
     }
 
     // event listener for toggle change
     if (toggle) {
         toggle.addEventListener('change', function() {
-            updateCurrentTime();
-            localStorage.setItem('timeFormatToggle', toggle.checked);
+            updateCurrentTime(); // updates current time display
+            updateResultTime(); // updates result page if applicable
+            localStorage.setItem('timeFormatToggle', toggle.checked); // save toggle state
         });
     }
 
-    // update current time every minute
-    if (currentTimeDisplay) {
-        setInterval(updateCurrentTime, 60000);
-        updateCurrentTime(); // Initial call
-    }
+    // update time every minute
+    setInterval(updateCurrentTime, 60000);
+    updateCurrentTime(); // initial call to display current time
 
     // form validation
     if (form) {
         form.addEventListener('submit', function(event) {
             var timeInput = parseInt(input.value, 10);
             if (isNaN(timeInput) || timeInput < 1 || timeInput > 120) {
-                event.preventDefault();
-                errorMessage.style.display = 'block';
-                input.classList.add('input-error');
+                event.preventDefault(); // prevent form submission
+                errorMessage.style.display = 'block'; // show error message
+                input.classList.add('input-error'); // add red border
             } else {
-                errorMessage.style.display = 'none';
-                input.classList.remove('input-error');
+                errorMessage.style.display = 'none'; // hide error message
+                input.classList.remove('input-error'); // remove red border
             }
         });
     }
-});
 
-// result.html 
-document.addEventListener('DOMContentLoaded', function() {
-    var toggle = document.getElementById('time-format-toggle');
-    var currentTimeElement = document.getElementById('currentTime');
-    var alarmTimeElement = document.getElementById('alarmTime');
-    var is24HourFormat = localStorage.getItem('timeFormatToggle') === 'true';
+    //updates the result time format with toggle
+    function updateResultTime() {
+        if (currentTimeElement && alarmTimeElement) {
+            var originalCurrentTime = currentTimeElement.getAttribute('data-original-time');
+            var originalAlarmTime = alarmTimeElement.getAttribute('data-original-time');
 
-    // restore toggle state on loading and update the display
-    if (toggle) {
-        toggle.checked = is24HourFormat;
+            if (toggle.checked) {
+                currentTimeElement.innerHTML = convertTo24Hour(originalCurrentTime);
+                alarmTimeElement.innerHTML = convertTo24Hour(originalAlarmTime);
+            } else {
+                currentTimeElement.innerHTML = convertTo12Hour(originalCurrentTime);
+                alarmTimeElement.innerHTML = convertTo12Hour(originalAlarmTime);
+            }
+        }
     }
 
-    // 12-hour to 24-hour conversion
+    //12-24
+    function convertTo24Hour(timeString) {
+        var parts = timeString.split(":");
+        var hour = parseInt(parts[0]);
+        var minute = parts[1];
+
+        if (timeString.includes("PM") && hour !== 12) {
+            hour += 12;
+        } else if (timeString.includes("AM") && hour === 12) {
+            hour = 0;
+        }
+
+        return hour.toString().padStart(2, '0') + ":" + minute;
+    }
+
+    //24-12
     function convertTo12Hour(timeString) {
         var parts = timeString.split(":");
         var hour = parseInt(parts[0]);
@@ -92,7 +117,25 @@ document.addEventListener('DOMContentLoaded', function() {
         return hour + ":" + minute + " " + period;
     }
 
-    // 24-hour to 12-hour conversion
+    if (currentTimeElement && alarmTimeElement) {
+        updateResultTime();
+    }
+});
+
+//results page
+
+document.addEventListener('DOMContentLoaded', function() {
+    var toggle = document.getElementById('time-format-toggle');
+    var currentTimeElement = document.getElementById('currentTime');
+    var alarmTimeElement = document.getElementById('alarmTime');
+    var is24HourFormat = localStorage.getItem('timeFormatToggle') === 'true';
+
+    //restore toggle state on loading and update the display
+    if (toggle) {
+        toggle.checked = is24HourFormat;
+    }
+
+    //12-24
     function convertTo24Hour(timeString) {
         var parts = timeString.split(":");
         var hour = parseInt(parts[0]);
@@ -107,7 +150,26 @@ document.addEventListener('DOMContentLoaded', function() {
         return hour.toString().padStart(2, '0') + ":" + minute;
     }
 
-    // update result time with toggle
+    //24-12
+    function convertTo12Hour(timeString) {
+        var parts = timeString.split(":");
+        var hour = parseInt(parts[0]);
+        var minute = parts[1];
+        var period = "AM";
+
+        if (hour >= 12) {
+            period = "PM";
+            if (hour > 12) {
+                hour -= 12;
+            }
+        } else if (hour === 0) {
+            hour = 12;
+        }
+
+        return hour + ":" + minute + " " + period;
+    }
+
+    // update the result time format with toggle
     function updateResultTime() {
         if (currentTimeElement && alarmTimeElement) {
             var originalCurrentTime = currentTimeElement.getAttribute('data-original-time');
@@ -126,18 +188,19 @@ document.addEventListener('DOMContentLoaded', function() {
     // event listener for toggle change
     if (toggle) {
         toggle.addEventListener('change', function() {
-            updateResultTime();
-            localStorage.setItem('timeFormatToggle', toggle.checked);
+            updateResultTime(); // Update result time display
+            localStorage.setItem('timeFormatToggle', toggle.checked); // save toggle
         });
     }
 
-    // initialize result time please
+    //initialize result time
     if (currentTimeElement && alarmTimeElement) {
         updateResultTime();
     }
 });
 
-// Stars! (Starry background effect) 
+//stars! i love this part
+
 document.addEventListener('DOMContentLoaded', function() {
     const starContainer = document.createElement('div');
     starContainer.classList.add('stars-background');
@@ -149,12 +212,11 @@ document.addEventListener('DOMContentLoaded', function() {
         const star = document.createElement('div');
         star.classList.add('star');
 
-        star.style.top = Math.random() * 100 + 'vh'; // random vertical position
-        star.style.left = Math.random() * 100 + 'vw'; // random horizontal position
-        star.style.animationDuration = 1.2 + Math.random() * 1.5 + 's'; // random flicker effect
+        star.style.top = Math.random() * 100 + 'vh'; //random position on the screen
+        star.style.left = Math.random() * 100 + 'vw';
 
-        starContainer.appendChild(star); // append star to container
+        star.style.animationDuration = 1.2 + Math.random() * 1.5 + 's'; // random flicker
+
+        starContainer.appendChild(star); //append star to container
     }
 });
-
-// IF I EVER SEE ANOTHER LINE OF JS IT WILL BE TOO SOON
