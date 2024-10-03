@@ -4,40 +4,24 @@
     <title>Sleep Calculator</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
-    <meta name="viewport" content="width=device-width, initial-scale=1"> 
-    <style>
-        /* styling for the toggle */
-        .toggle-container {
-            position: absolute;
-            top: 10px;
-            right: 20px;
-        }
-
-        /* styling for the current time display */
-        #current-time {
-            margin-top: 20px; /* adds space above the time display */
-            font-size: 1.2em; /* makes the text a bit larger */
-            text-align: right; /* aligns text to the right */
-            color: #333; /* sets a dark gray color for the text */
-            position: absolute; /* allows for positioning */
-            top: 60px; /* moves the time display down */
-            right: 20px; /* aligns the time display with the toggle */
-        }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
     <div class="title-container">
         <h1>RestRight</h1>
-        <img src="../static/stars.png" alt="stars" class="stars">
-    </div>
-    
-    <!-- time format toggle -->
-    <div class="toggle-container">
-        <label for="time-format-toggle">24 Hour</label>
-        <input type="checkbox" id="time-format-toggle">
     </div>
 
-    <div id="current-time"></div> <!-- current time display -->
+    <!-- current time and toggle switch -->
+    <div class="current-time-container">
+        <span id="current-time">Current time: </span>
+        <div class="toggle-container">
+            <label class="switch24">
+                <input type="checkbox" id="time-format-toggle">
+                <span class="slider round"></span>
+            </label>
+            <span class="toggle-label">24 Hour</span>
+        </div>
+    </div>
 
     <form id="sleepForm" action="/calculate" method="POST">
         <label for="time_to_fall_asleep">How long does it take you to fall asleep? (minutes)</label>
@@ -46,62 +30,6 @@
         <button type="submit">Calculate</button>
     </form>
 
-    <script>
-        // form element
-        var form = document.getElementById('sleepForm');
-        var input = document.getElementById('time_to_fall_asleep');
-        var errorMessage = document.getElementById('error-message');
-        var toggle = document.getElementById('time-format-toggle'); // toggle for time format
-        var currentTimeDisplay = document.getElementById('current-time'); // get the time display div
-
-        // initialize current time
-        function updateCurrentTime() {
-            var now = new Date(); // get current date and time
-            var hours = now.getHours(); // get hours
-            var minutes = now.getMinutes(); // get minutes
-            var suffix = ''; // for am/pm
-
-            if (!toggle.checked) { // if not 24 hour format
-                suffix = hours >= 12 ? ' PM' : ' AM'; // determine suffix
-                hours = hours % 12 || 12; // convert to 12 hour format
-            } else {
-                suffix = ''; // no suffix for 24 hour format
-            }
-
-            // add leading zero to minutes if needed
-            if (minutes < 10) {
-                minutes = '0' + minutes; // pad single digit minutes with a zero
-            }
-
-            // update the current time display
-            currentTimeDisplay.textContent = 'Current time: ' + hours + ':' + minutes + suffix; // display time
-        }
-
-        // event listener for toggle change
-        toggle.addEventListener('change', function() {
-            updateCurrentTime(); // update time format display
-        });
-
-        // update time every minute
-        setInterval(updateCurrentTime, 60000); // update every minute
-        updateCurrentTime(); // initial call to display current time
-
-        // event listener for form submission
-        form.addEventListener('submit', function(event) {
-            // get input
-            var timeInput = input.value;
-
-            // check if invalid
-            if (timeInput < 1 || timeInput > 120 || timeInput === '') {
-                // prevent submission if invalid
-                event.preventDefault();
-                errorMessage.style.display = 'block'; // show error message
-                input.classList.add('input-error'); // add red border
-            } else {
-                errorMessage.style.display = 'none'; // hide error message
-                input.classList.remove('input-error'); // remove red border
-            }
-        });
-    </script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>
